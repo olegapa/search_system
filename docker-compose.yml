@@ -1,0 +1,47 @@
+version: "3.8"
+
+x-search-cred: &search-creds
+  PROJECT_CODE: ${PROJECT_CODE}
+
+x-elastic-cred: &elastic-creds
+  ELASTIC_HOST: ${ELASTIC_HOST}
+  ELASTIC_USER: ${ELASTIC_USER}
+  ELASTIC_USER_PASS: ${ELASTIC_USER_PASS}
+
+x-depends: &depends
+  depends_on:
+    elasticsearch_db:
+      condition: service_healthy
+
+networks:
+  default:
+    name: elastic
+    external: false
+
+services:
+  search_system:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    container_name: server-${PROJECT_CODE}
+    <<: *depends
+    environment:
+      <<: *search-creds
+
+  elasticsearch_db:
+    container_name: elasticsearch
+    image: elasticsearch:6.8.23
+    ports:
+      - 9200:9200
+      - 9300:9300
+#    volumes:
+#      - elast-data:/usr/share/elasticsearch/data
+    environment:
+      - "discovery.type=single-node"
+      - "xpack.security.http.ssl.enabled=false"
+      - "ELASTIC_PASSWORD=${ELASTIC_USER_PASS}"
+    healthcheck:
+      test: curl -u elastic:${ELASTIC_USER_PASS} -s -f localhost:9200/_cat/health >/dev/null || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 10
