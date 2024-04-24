@@ -21,7 +21,7 @@ networks:
 services:
   search_system:
     build:
-      context: ./docker
+      context: ..
       dockerfile: Dockerfile
     container_name: server-${PROJECT_CODE}
     <<: *depends
