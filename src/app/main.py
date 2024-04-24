@@ -7,6 +7,17 @@ from elasticsearch import Elasticsearch
 from jboc import composed
 
 
+class SearchEngine:
+    def __init__(self, path):
+        docs = collect_docs(path)
+        client = Elasticsearch("http://localhost:9200/", api_key="YOUR_API_KEY")
+        create_base(client, docs)
+        self.client = client
+
+    def __call__(self, query: str):
+        return find_title(query, self.client)
+
+
 def main(path: Union[str, Path]):
     docs = collect_docs(path)
 
@@ -51,7 +62,7 @@ def collect_docs(path: Union[str, Path]) -> Dict[str, Dict]:
         yield p.stem, {"title": title, "text": text}
 
 
-def find_title(query: str, titles: Dict[str, str], client):
+def find_title(query: str, client):
     resp = client.search(query={"match": {"title": {"query": query}, "text": {"query": query}}})
     print("Got {} hits:".format(resp["hits"]["total"]["value"]))
     for hit in resp["hits"]["hits"]:

@@ -4,6 +4,7 @@ import sys
 
 import requests
 from flask import Flask, request
+from main import SearchEngine
 
 
 # ELASTIC_HOST = os.getenv('ELASTIC_HOST')
@@ -21,6 +22,8 @@ logger = logging.getLogger(__name__)
 #
 app = Flask(__name__)
 #
+
+engine = SearchEngine("src/sourses/data")
 
 @app.route('/search', methods=['POST'])
 def language():
