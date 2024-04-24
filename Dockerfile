@@ -1,7 +1,7 @@
 FROM python:3.12
 
-COPY ./../requirements.txt /app/
-COPY ./../src /app/
+COPY requirements.txt /app/
+COPY src /app/
 
 WORKDIR /app
 
