@@ -24,7 +24,6 @@ app = Flask(__name__)
 
 @app.route('/search', methods=['POST'])
 def language():
-    print("hi!")
     return OK_STATUS
 
 
