@@ -4,8 +4,7 @@ import sys
 
 import requests
 from flask import Flask, request
-from main import SearchEngine
-
+from main import SearchEngine, main
 
 # ELASTIC_HOST = os.getenv('ELASTIC_HOST')
 # ELASTIC_USER = os.getenv('ELASTIC_USER')
@@ -25,8 +24,11 @@ app = Flask(__name__)
 
 engine = SearchEngine("/usr/src/app/src/sourses/data")
 
+
 @app.route('/search', methods=['POST'])
 def language():
+    data = request.json
+    # data - json с запросом, нужно вызвать функцию
     return OK_STATUS
 
 

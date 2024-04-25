@@ -1,16 +1,37 @@
 import argparse
+import os
 from pathlib import Path
 from typing import Union, Dict
 
 import docx
+import requests
 from elasticsearch import Elasticsearch
 from jboc import composed
+from elasticsearch.helpers import bulk
 
+ELASTIC_HOST = os.environ.get('ELASTIC_HOST') or 'localhost'
+ELASTIC_USER = os.environ.get('ELASTIC_USER') or 'user'
+ELASTIC_USER_PASS = os.environ.get('ELASTIC_USER_PASS') or 'pass'
+TRAVEL_INDEX = 'travel_line'
+# RU_ANALYZER = create_analyzer()
+auth = requests.auth.HTTPBasicAuth(ELASTIC_USER, ELASTIC_USER_PASS)
+
+es_index_description = {
+    TRAVEL_INDEX: {
+
+    }
+}
 
 class SearchEngine:
+
     def __init__(self, path):
         docs = collect_docs(path)
-        client = Elasticsearch("http://localhost:9200/")
+        client = Elasticsearch(f'http://{ELASTIC_HOST}:9200/',
+                               timeout=30,
+                               max_retries=10,
+                               retry_on_timeout=True,
+                               basic_auth=(ELASTIC_USER, ELASTIC_USER_PASS)
+                               )
 
         mappings = {
             "properties": {
