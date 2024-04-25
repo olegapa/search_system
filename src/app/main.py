@@ -8,6 +8,14 @@ from jboc import composed, collect
 import docx
 
 
+class SearchEngine:
+    def __init__(self, path: str):
+        self.titles = collect_titles(path)
+
+    def __call__(self, query: str):
+        return find_title(query, self.titles)
+
+
 def main(path: Union[str, Path]):
     titles = collect_titles(path)
     repl(titles)
