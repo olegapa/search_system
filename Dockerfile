@@ -1,12 +1,13 @@
 FROM python:3.12
 
-COPY requirements.txt /app/
-COPY src /app/
+ADD requirements.txt /app/requirements.txt
 
 WORKDIR /app
 
 RUN python -m pip install --upgrade pip && \
-    python -m pip install -r requirements.txt
+    python -m pip install -r /app/requirements.txt
+
+COPY . /app
 
 EXPOSE 5055
-ENTRYPOINT [ "bash" , "/app/entrypoint.sh" ]
+ENTRYPOINT [ "bash" , "/app/src/entrypoint.sh" ]
