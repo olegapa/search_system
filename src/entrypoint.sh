@@ -1,5 +1,5 @@
 #!/bin/bash
 
-ECHO "Starting search system"
+echo "Starting search system"
 
-python ./app/rest.py
+python "$PWD"/src/app/rest.py

@@ -1,12 +1,16 @@
 FROM python:3.12
 
-COPY requirements.txt /app/
-COPY src /app/
+RUN mkdir -p /usr/src/app
 
-WORKDIR /app
+# this will allow us to cache pip dependencies
+ADD requirements.txt /usr/src/app/requirements.txt
 
 RUN python -m pip install --upgrade pip && \
-    python -m pip install -r requirements.txt
+    python -m pip install -r /usr/src/app/requirements.txt
+
+COPY . /usr/src/app
+
+WORKDIR /usr/src/app
 
 EXPOSE 5055
-ENTRYPOINT [ "bash" , "/app/entrypoint.sh" ]
+ENTRYPOINT [ "bash" , "/usr/src/app/src/entrypoint.sh" ]

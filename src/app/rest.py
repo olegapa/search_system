@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 #
 
-engine = SearchEngine("src/sourses/data")
+engine = SearchEngine("/usr/src/app/src/sourses/data")
 
 @app.route('/search', methods=['POST'])
 def language():
