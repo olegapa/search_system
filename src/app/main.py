@@ -10,7 +10,17 @@ from jboc import composed
 class SearchEngine:
     def __init__(self, path):
         docs = collect_docs(path)
-        client = Elasticsearch("http://localhost:9200/", api_key="YOUR_API_KEY")
+        client = Elasticsearch("http://localhost:9200/")
+
+        mappings = {
+            "properties": {
+                "title": {"type": "text"},
+                "text": {"type": "text"}
+            },
+        }
+
+        client.indices.create(index="TravelLine", mappings=mappings)
+
         create_base(client, docs)
         self.client = client
 
@@ -25,7 +35,7 @@ def main(path: Union[str, Path]):
         print("Empty knowledge base")
         return
 
-    client = Elasticsearch("http://localhost:9200/", api_key="YOUR_API_KEY")
+    client = Elasticsearch("http://localhost:9200/", api_key=None)
     create_base(client, docs)
 
     repl(client)
@@ -34,7 +44,7 @@ def main(path: Union[str, Path]):
 def create_base(client, docs):
     for i, (k, v) in enumerate(docs.items()):
         client.index(
-            index=str(i),
+            index="TravelLine",
             id=str(i),
             document=v,
         )
