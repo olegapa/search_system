@@ -1,4 +1,4 @@
 #!/bin/bash
 
 
-python ./app/rest.py
+python /app/src/app/rest.py
