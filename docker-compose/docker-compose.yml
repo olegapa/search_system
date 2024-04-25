@@ -20,6 +20,8 @@ networks:
 
 services:
   search_system:
+    ports:
+      - 5055:5055
     build:
       context: ..
       dockerfile: Dockerfile
@@ -30,7 +32,7 @@ services:
 
   elasticsearch_db:
     container_name: elasticsearch
-    image: elasticsearch:6.8.23
+    image: elasticsearch:8.13.0
     ports:
       - 9200:9200
       - 9300:9300
