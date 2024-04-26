@@ -6,18 +6,43 @@ from Levenshtein import distance
 from deli import load_text
 from jboc import composed, collect
 import docx
+import re
+import string
+
+import pymorphy2
+
+
+class Morpholyzer:
+    def __init__(self):
+        self.morph = pymorphy2.MorphAnalyzer()
+
+    def __call__(self, word: str) -> str:
+        return self.morph.parse(word)[0].normal_form
+
+    def normalize_sentence(self, sentence: str) -> str:
+        regex = re.compile('[%s]' % re.escape(string.punctuation))
+        return " ".join([self(w) for w in regex.sub('', sentence).lower().split(" ")])
 
 
 class SearchEngine:
     def __init__(self, path: str):
-        self.titles = collect_titles(path)
+        self.morph = Morpholyzer()
+        self.titles = {title: {
+            "content": content,
+            "normalized_title": " ".join(self.morph.normalize_sentence(title))
+        } for title, content in collect_titles(path).items()}
 
-    def __call__(self, query: str):
-        return find_title(query, self.titles)
+    def __call__(self, query: str, data: Optional[dict] = None):
+        normalized_query = self.morph.normalize_sentence(query)
+        data = {t: {
+                    "content": c,
+                    "normalized_title": " ".join(self.morph.normalize_sentence(t))
+                } for t, c in data.items()} if data else self.titles
+        return find_title(normalized_query, data)
 
 
 def main(path: Union[str, Path]):
-    titles = collect_titles(path)
+    titles = SearchEngine(path).titles
     repl(titles)
 
 
@@ -32,7 +57,7 @@ def repl(titles: Dict[str, str]):
             print("You haven't entered anything.")
             continue
 
-        text = find_title(query, titles)
+        title, text = find_title(query, titles)
         print(f"The answer is:\n{text}")
 
 
@@ -46,8 +71,10 @@ def collect_titles(path: Union[str, Path]) -> Dict[str, str]:
 
 
 def find_title(query: str, titles: Dict[str, str]) -> Optional[str]:
-    _, text = min(titles.items(), key=lambda t: distance(query.lower(), t[0].lower()))
-    return text
+    title, text = min(titles.items(), key=lambda t: distance(query.lower(),
+                                         t[1]["normalized_title"].lower())
+                  )
+    return title, text["content"]
 
 
 def read_docx(path):

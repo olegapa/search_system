@@ -5,7 +5,7 @@ import sys
 import requests
 from flask import Flask, request
 from main import SearchEngine
-from database_utils import create_title_answer
+from database_utils import create_title_answer, fetch_all, get_all_elements
 from database_accessor import DatabaseAccessor
 
 # ELASTIC_HOST = os.getenv('ELASTIC_HOST')
@@ -38,12 +38,15 @@ database_accessor = DatabaseAccessor(DATABASE_CONFIG)
 
 @app.route('/search', methods=['POST'])
 def search():
-    answer = engine(request.json["data"])
+    data = get_all_elements(logger)
+    answer = engine(request.json["data"], data=data)
     return OK_STATUS
 
 @app.route('/init', methods=['POST'])
 def init():
     create_title_answer(logger)
+    fetch_all({t: c["content"] for t, c in engine.titles.items()},
+              logger)
     return OK_STATUS
 
 if __name__ == '__main__':

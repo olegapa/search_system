@@ -14,7 +14,10 @@ from database import DataBaseHandler
 import argparse
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path='../.env')
+from pathlib import Path
+
+local_path = Path(__file__).resolve()
+load_dotenv(dotenv_path=local_path.parent.parent / ".env")
 
 bot = Bot(token=os.environ['BOT_TOKEN'])
 dp = Dispatcher(bot)
@@ -42,7 +45,7 @@ __PARAMS: dict[str, tp.Any] = {
     # 'GOOGLE_API_KEY': os.environ['GOOGLE_API_KEY'],
     # 'GOOGLE_CX_KEY': os.environ['GOOGLE_CX_KEY'],
     # 'IMDB_API_KEY': os.environ['IMDB_API_KEY'],
-    'DATABASE_NAME': 'user_history_db'# os.environ['DATABASE_NAME']
+    'DATABASE_NAME': 'user_history_db'  # os.environ['DATABASE_NAME']
 }
 
 __KEYBOARDS: dict[str, types.InlineKeyboardMarkup] = {
@@ -56,7 +59,7 @@ __DATABASE = DataBaseHandler(__PARAMS['DATABASE_NAME'])
 # START
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):  # type: ignore
-    await message.answer('[ ]({}){}'.format(None,'Привет! Я бот Traveline, задай мне свой вопрос'),
+    await message.answer('[ ]({}){}'.format(None, 'Привет! Я бот Traveline, задай мне свой вопрос'),
                          parse_mode='markdown', reply_markup=__KEYBOARDS['empty_kbd'])
 
     await bot_help(message)
@@ -68,12 +71,12 @@ async def bot_help(message: types.Message):  # type: ignore
     await message.answer('Чтобы задать вопрос, просто напишите и отправьте его мне\n'
                          '/start для старта/рестарта бота\n'
                          '/help для помощи\n'
-                        #  '/stat for showing your searching stats\n'
+                         #  '/stat for showing your searching stats\n'
                          '/history для истории запросов\n'
-                        #  f'/language allow user to switch between '
-                        #  f'two search languages russian (ru) and english (en). '
-                        #  f'will affect content of additional information about films'
-                        )
+                         #  f'/language allow user to switch between '
+                         #  f'two search languages russian (ru) and english (en). '
+                         #  f'will affect content of additional information about films'
+                         )
 
 
 # # STATISTICS
@@ -170,7 +173,7 @@ async def not_found(message: types.Message) -> None:
 @dp.message_handler()
 async def film(message: types.Message):  # type: ignore
     async with aiohttp.ClientSession() as session:
-        response = await session.post(url=f'localhost:5055/search', data=message.text)
+        response = await session.post(url=f'server-search_system:5055/search', data=message.text)
 
         if response.status_code != 200:
             await bad_request(message)
@@ -195,12 +198,11 @@ async def film(message: types.Message):  # type: ignore
             # keyboard.add(types.InlineKeyboardButton(text=f'Watch on {url_2.host}', url=str(url_2),
             #                                         callback_data=f'{__PARAMS["CALLBACK_KEY"]}{key}u_2'))
 
-            await message.answer("({}){}".format(response.text), parse_mode='markdown'), #reply_markup=keyboard)
+            await message.answer("({}){}".format(response.text), parse_mode='markdown'),  # reply_markup=keyboard)
             await __DATABASE.append(message.from_user.id, f'Q: {message.text}\nA: {response.text}')
 
 
 if __name__ == '__main__':
-    
     # parser = argparse.ArgumentParser(prog='Bot', description='Invoking telegram bot')
     # parser.add_argument('--env', type=str, required=True, help='path to .env file')
     # args = parser.parse_args()

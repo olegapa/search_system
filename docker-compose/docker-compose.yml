@@ -27,6 +27,14 @@ services:
     ports:
       - 5055:5055
 
+  telegram_bot:
+    build:
+      context: ../bot
+      dockerfile: Dockerfile
+    container_name: telegram-${PROJECT_CODE}
+    environment:
+      <<: *search-creds
+
   postgres_db:
     image: postgres:13
     container_name: postgres-db
