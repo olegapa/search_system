@@ -32,9 +32,13 @@ class SearchEngine:
             "normalized_title": " ".join(self.morph.normalize_sentence(title))
         } for title, content in collect_titles(path).items()}
 
-    def __call__(self, query: str):
+    def __call__(self, query: str, data: Optional[dict] = None):
         normalized_query = self.morph.normalize_sentence(query)
-        return find_title(normalized_query, self.titles)
+        data = {t: {
+                    "content": c,
+                    "normalized_title": " ".join(self.morph.normalize_sentence(t))
+                } for t, c in data.items()} if data else self.titles
+        return find_title(normalized_query, data)
 
 
 def main(path: Union[str, Path]):
