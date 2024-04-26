@@ -39,6 +39,7 @@ database_accessor = DatabaseAccessor(DATABASE_CONFIG)
 @app.route('/search', methods=['POST'])
 def search():
     data = get_all_elements(logger)
+    logger.info(request.json["data"])
     answer = engine(request.json["data"], data=data)
     response = make_response(jsonify(answer[1]), 200)
     return response

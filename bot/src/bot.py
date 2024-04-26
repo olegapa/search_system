@@ -1,5 +1,7 @@
 # from aiogram import Bot, types, Dispatcher, filters
-# from aiogram.utils import 
+# from aiogram.utils import
+import json
+
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher, filters
 from aiogram.utils import executor
@@ -173,7 +175,8 @@ async def not_found(message: types.Message) -> None:
 @dp.message_handler()
 async def film(message: types.Message):  # type: ignore
     async with aiohttp.ClientSession() as session:
-        response = await session.post(url=f'http://server-search_system:5055/search', data=message.text)
+        jj = {"data": message.text}
+        response = await session.post(url=f'http://server-search_system:5055/search', json=jj)
     
         if response.status != 200:
             await bad_request(message)
