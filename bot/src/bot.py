@@ -105,7 +105,7 @@ async def user_search_history(message: types.Message):  # type: ignore
 # BAD REQUEST CASE
 async def bad_request(message: types.Message):  # type: ignore
     await message.answer('[ ]({}){}'.format(__PARAMS['BAD_REQUEST_GIF'],
-                                            'Запрос не распознан'),
+                                            'Простите, сервер '),
                          parse_mode='markdown', reply_markup=__KEYBOARDS['empty_kbd'])
 
 
@@ -175,7 +175,7 @@ async def film(message: types.Message):  # type: ignore
     async with aiohttp.ClientSession() as session:
         response = await session.post(url=f'http://server-search_system:5055/search', data=message.text)
     
-        if response['status_code'] != 200:
+        if response.status != 200:
             await bad_request(message)
         elif not (results := (await response.json())['results']):
             await not_found(message)
