@@ -3,6 +3,13 @@ version: "3.8"
 x-search-cred: &search-creds
   PROJECT_CODE: ${PROJECT_CODE}
 
+x-postgre-cred: &pg-creds
+  PG_HOST: ${PG_HOST}
+  PG_PORT: ${PG_PORT}
+  PG_USER: ${PG_USER}
+  PG_USER_PASS: ${PG_USER_PASS}
+  PG_DATABASE_NAME: ${PG_DATABASE_NAME}
+
 
 networks:
   default:
@@ -22,10 +29,11 @@ services:
     image: postgres:13
     container_name: postgres-db
     environment:
+      <<: *pg-creds
       POSTGRES_USER: ${PG_USER}
       POSTGRES_PASSWORD: ${PG_USER_PASS}
       POSTGRES_DB: ${PG_DATABASE_NAME}
-      POSTGRES_MULTIPLE_DATABASES: ${PG_USER}:${PG_USER_PASS}
+      POSTGRES_MULTIPLE_DATABASES: ${PG_DATABASE_NAME_N}:${PG_USER}:${PG_USER_PASS}
     volumes:
       - pg-db-volume:/var/lib/postgresql/data
       - ./create-multiple-db.sh:/docker-entrypoint-initdb.d/init-multi-postgres-databases.sh
