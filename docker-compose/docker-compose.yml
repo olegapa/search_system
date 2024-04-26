@@ -23,7 +23,9 @@ services:
       dockerfile: Dockerfile
     container_name: server-${PROJECT_CODE}
     environment:
-      <<: *search-creds
+      <<: [*search-creds, *pg-creds]
+    ports:
+      - 5055:5055
 
   postgres_db:
     image: postgres:13
