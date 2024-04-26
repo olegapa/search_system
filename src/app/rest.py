@@ -5,7 +5,8 @@ import sys
 import requests
 from flask import Flask, request
 from main import SearchEngine
-
+from database_utils import create_title_answer
+from database_accessor import DatabaseAccessor
 
 # ELASTIC_HOST = os.getenv('ELASTIC_HOST')
 # ELASTIC_USER = os.getenv('ELASTIC_USER')
@@ -24,12 +25,26 @@ app = Flask(__name__)
 #
 
 engine = SearchEngine("/app/src/sourses/data")
+# create_title_answer(logger)
+DATABASE_CONFIG = {
+    'host': os.getenv('PG_HOST'),
+    'port': os.getenv('PG_PORT'),
+    'database_name': os.getenv('PG_DIGEST_DB_NAME'),
+    'user': os.getenv('PG_USER'),
+    'password': os.getenv('PG_USER_PASS'),
+}
+
+database_accessor = DatabaseAccessor(DATABASE_CONFIG)
 
 @app.route('/search', methods=['POST'])
 def search():
     answer = engine(request.json["data"])
     return OK_STATUS
 
+@app.route('/init', methods=['POST'])
+def init():
+    create_title_answer(logger)
+    return OK_STATUS
 
 if __name__ == '__main__':
     log = logging.getLogger(__name__)
