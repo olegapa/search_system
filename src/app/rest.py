@@ -40,13 +40,18 @@ database_accessor = DatabaseAccessor(DATABASE_CONFIG)
 def search():
     data = get_all_elements(logger)
     answer = engine(request.json["data"], data=data)
-    return OK_STATUS
+    response = make_response(jsonify(answer[1]), 200)
+    return response
 
 @app.route('/init', methods=['POST'])
 def init():
     create_title_answer(logger)
     fetch_all({t: c["content"] for t, c in engine.titles.items()},
               logger)
+    return OK_STATUS
+@app.route('/add', methods=['POST'])
+def addd():
+    create_title_answer(logger)
     return OK_STATUS
 
 if __name__ == '__main__':
