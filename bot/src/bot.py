@@ -180,7 +180,7 @@ async def film(message: types.Message):  # type: ignore
     
         if response.status != 200:
             await bad_request(message)
-        elif not (results := (await response.json())['results']):
+        elif not (results := (await response.json())):
             await not_found(message)
         else:
             # film_id: str = results[0]['id']
@@ -201,8 +201,8 @@ async def film(message: types.Message):  # type: ignore
             # keyboard.add(types.InlineKeyboardButton(text=f'Watch on {url_2.host}', url=str(url_2),
             #                                         callback_data=f'{__PARAMS["CALLBACK_KEY"]}{key}u_2'))
 
-            await message.answer("({}){}".format(response.text), parse_mode='markdown'),  # reply_markup=keyboard)
-            await __DATABASE.append(message.from_user.id, f'Q: {message.text}\nA: {response.text}')
+            await message.answer("[ ]({}){}".format(None, results), parse_mode='markdown'),  # reply_markup=keyboard)
+            await __DATABASE.append(message.from_user.id, f'Q: {message.text}\nA: {results}')
 
 
 if __name__ == '__main__':
