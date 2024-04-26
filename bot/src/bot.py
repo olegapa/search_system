@@ -81,7 +81,7 @@ async def user_search_history(message: types.Message):  # type: ignore
 # BAD REQUEST CASE
 async def bad_request(message: types.Message):  # type: ignore
     await message.answer('[ ]({}){}'.format(__PARAMS['BAD_REQUEST_GIF'],
-                                            'Простите, сервер '),
+                                            'Простите, произошла какая-то ошибкана сервере'),
                          parse_mode='markdown', reply_markup=__KEYBOARDS['empty_kbd'])
 
 
