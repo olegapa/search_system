@@ -3,7 +3,7 @@ import os.path
 import sys
 
 import requests
-from flask import Flask, request
+from flask import Flask, request, make_response, jsonify
 from main import SearchEngine
 from database_utils import create_title_answer, fetch_all, get_all_elements
 from database_accessor import DatabaseAccessor
