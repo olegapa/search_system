@@ -10,4 +10,4 @@ RUN python -m pip install --upgrade pip && \
 COPY . /bot
 
 EXPOSE 5055
-ENTRYPOINT [ "python" , "bot/src/bot/src/bot.py" ]
+ENTRYPOINT [ "bash" , "/bot/entrypoint.sh" ]

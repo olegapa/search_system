@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python /bot/bot/src/bot.py
+python /bot/src/bot.py

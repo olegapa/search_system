@@ -1,5 +1,5 @@
 from aiogram import Bot, types
-from aiogram.dispatcher import Dispatcher, filters
+from aiogram.dispatcher.dispather import Dispatcher, filters
 from aiogram.utils import executor
 import aiohttp
 import os

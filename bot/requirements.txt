@@ -1,5 +1,4 @@
 requests~=2.31.0
 aiogram
-sqlite3
 yarl
 uuid
