@@ -173,9 +173,9 @@ async def not_found(message: types.Message) -> None:
 @dp.message_handler()
 async def film(message: types.Message):  # type: ignore
     async with aiohttp.ClientSession() as session:
-        response = await session.post(url=f'server-search_system:5055/search', data=message.text)
-
-        if response.status_code != 200:
+        response = await session.post(url=f'http://server-search_system:5055/search', data=message.text)
+    
+        if response['status_code'] != 200:
             await bad_request(message)
         elif not (results := (await response.json())['results']):
             await not_found(message)
