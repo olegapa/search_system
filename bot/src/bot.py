@@ -1,3 +1,5 @@
+# from aiogram import Bot, types, Dispatcher, filters
+# from aiogram.utils import 
 from aiogram import Bot, types
 from aiogram.dispatcher.dispather import Dispatcher, filters
 from aiogram.utils import executor
@@ -9,13 +11,16 @@ from yarl import URL
 import uuid
 from collections import OrderedDict
 from database import DataBaseHandler
+import argparse
+from dotenv import load_dotenv
 
+load_dotenv(dotenv_path='../.env')
 
 bot = Bot(token=os.environ['BOT_TOKEN'])
 dp = Dispatcher(bot)
 
 __PARAMS: dict[str, tp.Any] = {
-    'LANGUAGE': 'en',
+    'LANGUAGE': 'ru',
     'SIZE': '595x842',
     'START_GIF': URL('https://media.tenor.com/0NkVlanL1DcAAAAd/american-psycho.gif'),
     'NOT_FOUND_GIFS': (URL('https://media.tenor.com/GxA2qm-qmlkAAAAd/'
@@ -34,10 +39,10 @@ __PARAMS: dict[str, tp.Any] = {
     'CALLBACK_KEY': (uuid.uuid4().hex + uuid.uuid4().hex)[:32],
     'LRU_MAX_SIZE': 256,
     'GOOGLE_SEARCH_URL': URL('https://www.googleapis.com/customsearch/v1'),
-    'GOOGLE_API_KEY': os.environ['GOOGLE_API_KEY'],
-    'GOOGLE_CX_KEY': os.environ['GOOGLE_CX_KEY'],
-    'IMDB_API_KEY': os.environ['IMDB_API_KEY'],
-    'DATABASE_NAME': os.environ['DATABASE_NAME']
+    # 'GOOGLE_API_KEY': os.environ['GOOGLE_API_KEY'],
+    # 'GOOGLE_CX_KEY': os.environ['GOOGLE_CX_KEY'],
+    # 'IMDB_API_KEY': os.environ['IMDB_API_KEY'],
+    'DATABASE_NAME': 'user_history_db'# os.environ['DATABASE_NAME']
 }
 
 __KEYBOARDS: dict[str, types.InlineKeyboardMarkup] = {
@@ -51,7 +56,7 @@ __DATABASE = DataBaseHandler(__PARAMS['DATABASE_NAME'])
 # START
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):  # type: ignore
-    await message.answer('({}){}'.format('Привет! Я бот Traveline, задай мне свой вопрос'),
+    await message.answer('[ ]({}){}'.format(None,'Привет! Я бот Traveline, задай мне свой вопрос'),
                          parse_mode='markdown', reply_markup=__KEYBOARDS['empty_kbd'])
 
     await bot_help(message)
@@ -60,14 +65,15 @@ async def send_welcome(message: types.Message):  # type: ignore
 # HELP
 @dp.message_handler(commands=['help'])
 async def bot_help(message: types.Message):  # type: ignore
-    await message.answer('To find a film you just need to send me it name\n'
-                         '/start for start or restart the bot\n'
-                         '/help for showing help\n'
-                         '/stat for showing your searching stats\n'
-                         '/history for search history, top down from old to new\n'
-                         f'/language allow user to switch between '
-                         f'two search languages russian (ru) and english (en). '
-                         f'will affect content of additional information about films')
+    await message.answer('Чтобы задать вопрос, просто напишите и отправьте его мне\n'
+                         '/start для старта/рестарта бота\n'
+                         '/help для помощи\n'
+                        #  '/stat for showing your searching stats\n'
+                         '/history для истории запросов\n'
+                        #  f'/language allow user to switch between '
+                        #  f'two search languages russian (ru) and english (en). '
+                        #  f'will affect content of additional information about films'
+                        )
 
 
 # # STATISTICS
@@ -96,15 +102,14 @@ async def user_search_history(message: types.Message):  # type: ignore
 # BAD REQUEST CASE
 async def bad_request(message: types.Message):  # type: ignore
     await message.answer('[ ]({}){}'.format(__PARAMS['BAD_REQUEST_GIF'],
-                                            'Sorry mate, bad request'),
+                                            'Запрос не распознан'),
                          parse_mode='markdown', reply_markup=__KEYBOARDS['empty_kbd'])
 
 
 # IF FILM WAS NOT FOUND IN IMDb
 async def not_found(message: types.Message) -> None:
     await message.answer("[ ]({}){}".format(random.choice(__PARAMS['NOT_FOUND_GIFS']),
-                                            'Impressive. Very nice. Even I can\'t '
-                                            'find what you are looking for.'),
+                                            'Ого, я не знаю ответа на этот вопрос'),
                          parse_mode='markdown', reply_markup=__KEYBOARDS['empty_kbd'])
 
 
@@ -195,4 +200,10 @@ async def film(message: types.Message):  # type: ignore
 
 
 if __name__ == '__main__':
+    
+    # parser = argparse.ArgumentParser(prog='Bot', description='Invoking telegram bot')
+    # parser.add_argument('--env', type=str, required=True, help='path to .env file')
+    # args = parser.parse_args()
+    # load_dotenv(path=args['--env'])
+    # dp.start_polling()
     executor.start_polling(dp)

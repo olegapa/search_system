@@ -1,4 +1,6 @@
 requests~=2.31.0
-aiogram
+aiogram==2.5.0
+db-sqlite3
 yarl
 uuid
+python-dotenv
